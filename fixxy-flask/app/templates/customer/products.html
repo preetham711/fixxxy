@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Find Parts{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h2 style="color: var(--orange);">Explore the Parts Universe</h2>
+    <p>All available parts load automatically • search is optional</p>
+</div>
+
+<div class="search-bar">
+    <form method="GET" style="display: flex; gap: 15px; flex: 1; flex-wrap: wrap;">
+        <input type="text" name="search" class="form-control" placeholder="Search parts..." value="{{ search_query }}" style="flex: 1; min-width: 250px;">
+        <select name="category" class="form-control" style="width: 200px;">
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">⌕ Search</button>
+        <a href="{{ url_for('customer.products') }}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+{% if products %}
+<div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-icon">🔧</div>
+        <div class="product-name">{{ product.name }}</div>
+        <div class="product-category">{{ product.category }}</div>
+        <div class="product-price">₹{{ "%.2f"|format(product.price) }}</div>
+        <div class="product-stock {% if product.stock == 0 %}stock-danger{% elif product.stock < 5 %}stock-warning{% else %}stock-success{% endif %}">
+            {% if product.stock == 0 %}
+                ● Out of Stock
+            {% elif product.stock < 5 %}
+                ● {{ product.stock }} left - Low Stock
+            {% else %}
+                ● {{ product.stock }} in stock
+            {% endif %}
+        </div>
+        <div class="product-description">{{ product.description or 'Quality replacement component' }}</div>
+        <form method="POST" action="{{ url_for('customer.add_to_cart', product_id=product.id) }}">
+            <button type="submit" class="btn btn-primary" style="width: 100%;" {% if product.stock == 0 %}disabled{% endif %}>
+                ＋ Add to Cart
+            </button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 60px 40px;">
+    <h3 style="color: var(--muted);">No parts match that filter</h3>
+    <p style="color: var(--muted); margin-top: 10px;">Clear the search to see every part</p>
+    <a href="{{ url_for('customer.products') }}" class="btn btn-primary" style="margin-top: 20px;">View All Parts</a>
+</div>
+{% endif %}
+{% endblock %}

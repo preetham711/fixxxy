@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block page_title %}Customers{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">Customer Management</h2>
+<div class="table-responsive">
+    <table>
+        <thead><tr><th>Name</th><th>Username</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Joined</th></tr></thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td><strong>{{ customer.full_name }}</strong></td>
+                <td>{{ customer.username }}</td>
+                <td>{{ customer.phone or 'N/A' }}</td>
+                <td>{{ customer.order_count }}</td>
+                <td style="color: var(--orange); font-weight: bold;">₹{{ "%.2f"|format(customer.total_spent) }}</td>
+                <td>{{ customer.created_at.strftime('%d %b %Y') if customer.created_at is not string else customer.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

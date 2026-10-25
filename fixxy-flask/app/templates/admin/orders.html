@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block page_title %}Orders Management{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">Order Management</h2>
+<div class="search-bar">
+    <form method="GET" style="display: flex; gap: 15px; flex: 1;">
+        <input type="text" name="search" class="form-control" placeholder="Search by bill no, customer, phone..." value="{{ search_query }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{{ url_for('admin.orders') }}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+<div class="table-responsive">
+    <table>
+        <thead><tr><th>Bill No</th><th>Customer</th><th>Phone</th><th>Date</th><th>Total</th><th>Payment</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><strong>{{ order.bill_no }}</strong></td>
+                <td>{{ order.customer_name }}</td>
+                <td>{{ order.phone }}</td>
+                <td>{{ order.created_at.strftime('%d %b %Y %I:%M %p') if order.created_at is not string else order.created_at }}</td>
+                <td style="color: var(--orange); font-weight: bold;">₹{{ "%.2f"|format(order.grand_total) }}</td>
+                <td>{{ order.payment_method }}</td>
+                <td><a href="{{ url_for('admin.order_details', order_id=order.id) }}" class="btn btn-sm btn-secondary">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

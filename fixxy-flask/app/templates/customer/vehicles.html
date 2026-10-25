@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block page_title %}My Vehicles{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">My Vehicles</h2>
+
+<div class="card" style="margin-bottom: 30px;">
+    <h3 style="color: var(--orange); margin-bottom: 20px;">Add New Vehicle</h3>
+    <form method="POST" action="{{ url_for('customer.add_vehicle') }}">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div class="form-group">
+                <label class="form-label">Brand *</label>
+                <input type="text" name="brand" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Model *</label>
+                <input type="text" name="model" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Year *</label>
+                <input type="text" name="year" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Registration</label>
+                <input type="text" name="registration" class="form-control">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Vehicle</button>
+    </form>
+</div>
+
+{% if vehicles %}
+<div class="card-grid">
+    {% for vehicle in vehicles %}
+    <div class="card">
+        <div style="font-size: 48px; text-align: center; margin-bottom: 15px;">🚗</div>
+        <h3 style="color: var(--orange); text-align: center;">{{ vehicle.brand }} {{ vehicle.model }}</h3>
+        <p style="color: var(--muted); text-align: center; margin-top: 8px;">{{ vehicle.year }}</p>
+        {% if vehicle.registration_number %}
+        <p style="color: var(--blue); text-align: center; font-size: 14px; margin-top: 5px;">{{ vehicle.registration_number }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 60px;">
+    <h3 style="color: var(--muted);">No vehicles added yet</h3>
+    <p style="color: var(--muted); margin-top: 10px;">Add your first vehicle above</p>
+</div>
+{% endif %}
+{% endblock %}

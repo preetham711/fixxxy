@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="app-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">⚙</div>
+            <div class="brand-text">
+                <h1>FIXXY</h1>
+                <p>Drive Better • Fix Smarter</p>
+            </div>
+        </div>
+
+        {% if session.get('role') == 'admin' %}
+            <!-- Admin Navigation -->
+            <nav class="nav-section">
+                <div class="nav-section-title">Admin</div>
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">⌂ Dashboard</a>
+                <a href="{{ url_for('admin.products') }}" class="nav-link {% if 'products' in request.endpoint %}active{% endif %}">📦 Products</a>
+                <a href="{{ url_for('admin.inventory') }}" class="nav-link {% if 'inventory' in request.endpoint %}active{% endif %}">📊 Inventory</a>
+                <a href="{{ url_for('admin.orders') }}" class="nav-link {% if 'orders' in request.endpoint and 'admin' in request.endpoint %}active{% endif %}">🛒 Orders</a>
+                <a href="{{ url_for('admin.customers') }}" class="nav-link {% if 'customers' in request.endpoint %}active{% endif %}">👥 Customers</a>
+                <a href="{{ url_for('admin.coupons') }}" class="nav-link {% if 'coupons' in request.endpoint %}active{% endif %}">✂ Coupons</a>
+                <a href="{{ url_for('admin.reports') }}" class="nav-link {% if 'reports' in request.endpoint %}active{% endif %}">📈 Reports</a>
+            </nav>
+        {% else %}
+            <!-- Customer Navigation -->
+            <nav class="nav-section">
+                <div class="nav-section-title">Navigation</div>
+                <a href="{{ url_for('customer.dashboard') }}" class="nav-link {% if request.endpoint == 'customer.dashboard' %}active{% endif %}">⌂ Dashboard</a>
+                <a href="{{ url_for('customer.products') }}" class="nav-link {% if request.endpoint == 'customer.products' %}active{% endif %}">⌕ Find Parts</a>
+                <a href="{{ url_for('customer.water_wash') }}" class="nav-link {% if request.endpoint == 'customer.water_wash' %}active{% endif %}">✦ Water Wash</a>
+                <a href="{{ url_for('customer.cart') }}" class="nav-link {% if request.endpoint == 'customer.cart' %}active{% endif %}">🛒 Cart & Billing</a>
+                <a href="{{ url_for('customer.orders') }}" class="nav-link {% if 'orders' in request.endpoint and 'customer' in request.endpoint %}active{% endif %}">📋 My Orders</a>
+                <a href="{{ url_for('customer.vehicles') }}" class="nav-link {% if request.endpoint == 'customer.vehicles' %}active{% endif %}">🚗 My Vehicles</a>
+            </nav>
+        {% endif %}
+
+        <div class="nav-spacer"></div>
+
+        <nav class="nav-section">
+            <div class="nav-section-title">Account</div>
+            {% if session.get('role') == 'admin' %}
+                <a href="{{ url_for('admin.settings') }}" class="nav-link {% if request.endpoint == 'admin.settings' %}active{% endif %}">⚙ Settings</a>
+            {% else %}
+                <a href="{{ url_for('customer.profile') }}" class="nav-link {% if request.endpoint == 'customer.profile' %}active{% endif %}">👤 Profile</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="nav-link">↪ Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            <div class="user-info">
+                {% if session.get('role') != 'admin' %}
+                    {% set cart_count = session.get('cart', {})|length %}
+                    {% if cart_count > 0 %}
+                        <span class="cart-badge">🛒 {{ session.get('cart', {}).values()|sum }}</span>
+                    {% endif %}
+                {% endif %}
+                <span>● {{ session.get('full_name', 'User') }}</span>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Cart & Billing{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 30px;">
+    <div style="flex: 1;">
+        <h2 style="margin-bottom: 20px;">Your Cart</h2>
+        
+        {% if cart_items %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td><strong>{{ item.name }}</strong></td>
+                        <td>{{ item.category }}</td>
+                        <td>₹{{ "%.2f"|format(item.price) }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('customer.update_cart', product_id=item.id) }}" style="display: inline-flex; gap: 5px;">
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.stock }}" style="width: 60px; padding: 5px; background: var(--field); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+                                <button type="submit" class="btn btn-sm btn-secondary">Update</button>
+                            </form>
+                        </td>
+                        <td style="color: var(--orange); font-weight: bold;">₹{{ "%.2f"|format(item.total) }}</td>
+                        <td>
+                            <a href="{{ url_for('customer.remove_from_cart', product_id=item.id) }}" class="btn btn-sm btn-danger">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <a href="{{ url_for('customer.clear_cart') }}" class="btn btn-danger">Empty Cart</a>
+            <a href="{{ url_for('customer.products') }}" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 60px 40px;">
+            <h3 style="color: var(--muted);">Your cart is empty</h3>
+            <p style="color: var(--muted); margin-top: 10px;">Add some parts to get started</p>
+            <a href="{{ url_for('customer.products') }}" class="btn btn-primary" style="margin-top: 20px;">Browse Parts</a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if cart_items %}
+    <div style="width: 350px;">
+        <div class="cart-summary">
+            <h3>Bill Summary</h3>
+            <div class="summary-line">
+                <span>Subtotal:</span>
+                <span>₹{{ "%.2f"|format(totals.subtotal) }}</span>
+            </div>
+            <div class="summary-line">
+                <span>Discount:</span>
+                <span>₹{{ "%.2f"|format(totals.discount) }}</span>
+            </div>
+            <div class="summary-line">
+                <span>GST (18%):</span>
+                <span>₹{{ "%.2f"|format(totals.gst) }}</span>
+            </div>
+            <div class="summary-total">
+                <span>Grand Total:</span>
+                <span>₹{{ "%.2f"|format(totals.grand_total) }}</span>
+            </div>
+
+            <h4 style="margin-top: 25px; margin-bottom: 15px; font-size: 14px; color: var(--muted);">APPLY COUPON</h4>
+            <form method="POST" action="{{ url_for('customer.apply_coupon') }}" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" name="coupon_code" class="form-control" placeholder="Coupon Code" value="{{ coupon_code }}" style="flex: 1;">
+                <button type="submit" class="btn btn-secondary">Apply</button>
+            </form>
+            {% if coupon_code %}
+            <div style="background: rgba(67, 197, 138, 0.2); padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 13px;">
+                ✓ Coupon <strong>{{ coupon_code }}</strong> applied ({{ coupon_discount }}% off)
+                <a href="{{ url_for('customer.remove_coupon') }}" style="color: var(--red); margin-left: 10px;">Remove</a>
+            </div>
+            {% endif %}
+
+            <a href="{{ url_for('customer.checkout') }}" class="btn btn-primary" style="width: 100%; padding: 14px; text-align: center; display: block;">
+                Proceed to Checkout →
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block page_title %}Profile{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">My Profile</h2>
+<div class="card">
+    <h3 style="color: var(--orange); margin-bottom: 20px;">Account Information</h3>
+    <p><strong>Full Name:</strong> {{ user.full_name }}</p>
+    <p style="margin-top: 10px;"><strong>Username:</strong> {{ user.username }}</p>
+    <p style="margin-top: 10px;"><strong>Phone:</strong> {{ user.phone or 'Not provided' }}</p>
+    <p style="margin-top: 10px;"><strong>Address:</strong> {{ user.address or 'Not provided' }}</p>
+    <p style="margin-top: 10px;"><strong>Role:</strong> {{ user.role|capitalize }}</p>
+    <p style="margin-top: 10px;"><strong>Member Since:</strong> {{ user.created_at.strftime('%d %b %Y') if user.created_at is not string else user.created_at }}</p>
+</div>
+{% endblock %}

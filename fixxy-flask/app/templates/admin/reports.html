@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">Reports & Analytics</h2>
+<div style="margin-bottom: 20px;">
+    <a href="{{ url_for('admin.export_products') }}" class="btn btn-primary">📊 Export Products CSV</a>
+    <a href="{{ url_for('admin.export_orders') }}" class="btn btn-primary">📊 Export Orders CSV</a>
+</div>
+
+<h3 style="margin-top: 30px; margin-bottom: 20px;">Category-wise Sales</h3>
+<div class="table-responsive">
+    <table>
+        <thead><tr><th>Category</th><th>Units Sold</th><th>Revenue</th></tr></thead>
+        <tbody>
+            {% for cat in category_sales %}
+            <tr>
+                <td><strong>{{ cat.category }}</strong></td>
+                <td>{{ cat.units_sold }}</td>
+                <td style="color: var(--orange); font-weight: bold;">₹{{ "%.2f"|format(cat.revenue) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h3 style="margin-top: 40px; margin-bottom: 20px;">Monthly Revenue</h3>
+<div class="table-responsive">
+    <table>
+        <thead><tr><th>Month</th><th>Orders</th><th>Revenue</th></tr></thead>
+        <tbody>
+            {% for month in monthly_revenue %}
+            <tr>
+                <td><strong>{{ month.month }}</strong></td>
+                <td>{{ month.orders }}</td>
+                <td style="color: var(--orange); font-weight: bold;">₹{{ "%.2f"|format(month.revenue) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

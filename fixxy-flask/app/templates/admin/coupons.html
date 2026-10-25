@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block page_title %}Coupons{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">Coupon Management</h2>
+<div class="card" style="margin-bottom: 30px;">
+    <h3 style="color: var(--orange); margin-bottom: 20px;">Add/Update Coupon</h3>
+    <form method="POST" action="{{ url_for('admin.add_coupon') }}">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label class="form-label">Code *</label>
+                <input type="text" name="code" class="form-control" required style="text-transform: uppercase;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Discount % *</label>
+                <input type="number" name="discount" step="0.01" min="0" max="100" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="table-responsive">
+    <table>
+        <thead><tr><th>Code</th><th>Discount %</th><th>Description</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for coupon in coupons %}
+            <tr>
+                <td><strong>{{ coupon.code }}</strong></td>
+                <td>{{ coupon.discount }}%</td>
+                <td>{{ coupon.description }}</td>
+                <td>
+                    {% if coupon.active %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge badge-danger">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin.toggle_coupon', code=coupon.code) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-secondary">Toggle</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

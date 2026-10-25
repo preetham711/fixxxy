@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block page_title %}My Orders{% endblock %}
+{% block content %}
+<h2 style="margin-bottom: 25px;">Order History</h2>
+{% if orders %}
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Bill No</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total Amount</th>
+                <th>Payment Method</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><strong>{{ order.bill_no }}</strong></td>
+                <td>{{ order.created_at.strftime('%d %b %Y %I:%M %p') if order.created_at is not string else order.created_at }}</td>
+                <td>{{ order.customer_name }}</td>
+                <td style="color: var(--orange); font-weight: bold;">₹{{ "%.2f"|format(order.grand_total) }}</td>
+                <td>{{ order.payment_method }}</td>
+                <td>
+                    <a href="{{ url_for('customer.order_details', order_id=order.id) }}" class="btn btn-sm btn-primary">View Invoice</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 60px;">
+    <h3 style="color: var(--muted);">No orders yet</h3>
+    <p style="color: var(--muted); margin-top: 10px;">Start shopping for car parts</p>
+    <a href="{{ url_for('customer.products') }}" class="btn btn-primary" style="margin-top: 20px;">Browse Parts</a>
+</div>
+{% endif %}
+{% endblock %}

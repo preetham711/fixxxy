@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block page_title %}Order Details{% endblock %}
+{% block content %}
+<div class="no-print" style="margin-bottom: 20px;">
+    <a href="{{ url_for('customer.orders') }}" class="btn btn-secondary">← Back to Orders</a>
+    <button onclick="window.print()" class="btn btn-primary">🖨 Print Invoice</button>
+</div>
+
+<div class="invoice-container">
+    <div class="invoice-header">
+        <div>
+            <div class="invoice-title">⚙ FIXXY</div>
+            <p style="font-size: 16px; color: #666;">Car Spare Parts & Billing System</p>
+        </div>
+        <div style="text-align: right;">
+            <p><strong>Bill No:</strong> {{ order.bill_no }}</p>
+            <p><strong>Date:</strong> {{ order.created_at.strftime('%d %b %Y %I:%M %p') if order.created_at is not string else order.created_at }}</p>
+        </div>
+    </div>
+
+    <div class="invoice-details">
+        <h3>Customer Details</h3>
+        <p><strong>Name:</strong> {{ order.customer_name }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+        <p><strong>Address:</strong> {{ order.address }}</p>
+        {% if order.car_brand %}
+        <p><strong>Vehicle:</strong> {{ order.car_brand }} {{ order.car_model }} ({{ order.car_year }})</p>
+        {% endif %}
+    </div>
+
+    <table class="invoice-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>₹{{ "%.2f"|format(item.price) }}</td>
+                <td>₹{{ "%.2f"|format(item.total) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="invoice-totals">
+        <div class="total-line"><span>Subtotal:</span><span>₹{{ "%.2f"|format(order.subtotal) }}</span></div>
+        <div class="total-line"><span>Discount:</span><span>₹{{ "%.2f"|format(order.discount) }}</span></div>
+        <div class="total-line"><span>GST:</span><span>₹{{ "%.2f"|format(order.gst) }}</span></div>
+        <div class="total-line grand-total"><span>Grand Total:</span><span>₹{{ "%.2f"|format(order.grand_total) }}</span></div>
+        <p style="margin-top: 20px;"><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+    </div>
+
+    <p style="margin-top: 40px; text-align: center; color: #666;">Thank you for choosing FIXXY!</p>
+</div>
+{% endblock %}

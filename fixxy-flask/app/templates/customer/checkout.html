@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Checkout{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 25px;">Checkout & Payment</h2>
+
+<form method="POST">
+    <div style="display: flex; gap: 30px;">
+        <div style="flex: 1;">
+            <div class="card">
+                <h3 style="color: var(--orange); margin-bottom: 20px;">Customer Details</h3>
+                
+                <div class="form-group">
+                    <label for="customer_name" class="form-label">Customer Name *</label>
+                    <input type="text" id="customer_name" name="customer_name" class="form-control" value="{{ session.get('full_name') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="form-label">Address *</label>
+                    <textarea id="address" name="address" class="form-control" rows="2" required></textarea>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <h3 style="color: var(--orange); margin-bottom: 20px;">Vehicle Details</h3>
+                
+                <div class="form-group">
+                    <label for="car_brand" class="form-label">Car Brand</label>
+                    <input type="text" id="car_brand" name="car_brand" class="form-control" value="{{ default_vehicle.brand if default_vehicle else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="car_model" class="form-label">Car Model</label>
+                    <input type="text" id="car_model" name="car_model" class="form-control" value="{{ default_vehicle.model if default_vehicle else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="car_year" class="form-label">Year</label>
+                    <input type="text" id="car_year" name="car_year" class="form-control" value="{{ default_vehicle.year if default_vehicle else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="registration_number" class="form-label">Registration Number</label>
+                    <input type="text" id="registration_number" name="registration_number" class="form-control" value="{{ default_vehicle.registration_number if default_vehicle else '' }}">
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <h3 style="color: var(--orange); margin-bottom: 20px;">Payment Method</h3>
+                
+                <div class="form-group">
+                    <label><input type="radio" name="payment_method" value="UPI QR" checked> UPI QR - Scan QR using any UPI app</label><br>
+                    <label style="margin-top: 10px;"><input type="radio" name="payment_method" value="Debit / Credit Card"> Debit / Credit Card</label><br>
+                    <label style="margin-top: 10px;"><input type="radio" name="payment_method" value="Cash on Delivery"> Cash on Delivery</label><br>
+                    <label style="margin-top: 10px;"><input type="radio" name="payment_method" value="Net Banking"> Net Banking</label>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 350px;">
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                {% for item in cart_items %}
+                <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+                    <div style="font-weight: bold;">{{ item.name }}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: 5px;">
+                        <span>{{ item.quantity }} × ₹{{ "%.2f"|format(item.price) }}</span>
+                        <span>₹{{ "%.2f"|format(item.total) }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="summary-line">
+                    <span>Subtotal:</span>
+                    <span>₹{{ "%.2f"|format(totals.subtotal) }}</span>
+                </div>
+                <div class="summary-line">
+                    <span>Discount:</span>
+                    <span>₹{{ "%.2f"|format(totals.discount) }}</span>
+                </div>
+                <div class="summary-line">
+                    <span>GST:</span>
+                    <span>₹{{ "%.2f"|format(totals.gst) }}</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total to Pay:</span>
+                    <span>₹{{ "%.2f"|format(totals.grand_total) }}</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px;">
+                    CONFIRM & GENERATE BILL
+                </button>
+                <a href="{{ url_for('customer.cart') }}" class="btn btn-secondary" style="width: 100%; margin-top: 10px; text-align: center; display: block;">
+                    ← Back to Cart
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
